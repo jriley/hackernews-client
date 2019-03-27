@@ -8,9 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_story.*
 
-class MainActivity : AppCompatActivity() {
+class BottomNavActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,22 +47,33 @@ class MainActivity : AppCompatActivity() {
         }
 }
 
-class StoryFragment : Fragment() {
+abstract class StoryFragment : Fragment() {
+
+    abstract val layout: Int
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-        inflater.inflate(R.layout.fragment_story, container, false)
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        title.text = StoryTypes.values()[arguments?.getInt(TYPE) ?: 0].name
-    }
+        inflater.inflate(layout, container, false)
 
     companion object {
-        const val TYPE = "TYPE"
         fun newInstance(storyType: StoryTypes): Fragment =
-            StoryFragment().apply { arguments = Bundle().apply { putInt(TYPE, storyType.ordinal) } }
+            when (storyType) {
+                StoryTypes.TOP -> TopFragment()
+                StoryTypes.NEW -> NewFragment()
+                StoryTypes.BEST -> BestFragment()
+            }
     }
+}
+
+class TopFragment : StoryFragment() {
+    override val layout: Int = R.layout.fragment_top_story
+}
+
+class NewFragment : StoryFragment() {
+    override val layout: Int = R.layout.fragment_new_story
+}
+
+class BestFragment : StoryFragment() {
+    override val layout: Int = R.layout.fragment_best_story
 }
 
 enum class StoryTypes { TOP, BEST, NEW }
