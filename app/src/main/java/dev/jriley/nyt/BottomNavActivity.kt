@@ -17,9 +17,9 @@ class BottomNavActivity : AppCompatActivity() {
 
         navigation.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.navigation_home -> select(StoryTypes.TOP).let { true }
-                R.id.navigation_dashboard -> select(StoryTypes.BEST).let { true }
-                R.id.navigation_notifications -> select(StoryTypes.NEW).let { true }
+                R.id.navigation_top -> select(StoryTypes.TOP).let { true }
+                R.id.navigation_best -> select(StoryTypes.BEST).let { true }
+                R.id.navigation_new -> select(StoryTypes.NEW).let { true }
                 else -> false
             }
         }

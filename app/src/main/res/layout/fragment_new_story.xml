@@ -13,6 +13,6 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             app:textAllCaps="true"
-            android:text="@string/new_title"/>
+            android:text="@string/title_new"/>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

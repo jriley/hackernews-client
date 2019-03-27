@@ -17,30 +17,30 @@ object BottomNavScreen {
     }
 
     fun selectHome() {
-        onView(withId(R.id.navigation_home)).perform(click())
+        onView(withId(R.id.navigation_top)).perform(click())
     }
 
     fun selectDashboard() {
-        onView(withId(R.id.navigation_dashboard)).perform(click())
+        onView(withId(R.id.navigation_best)).perform(click())
     }
 
     fun selectNotifications() {
-        onView(withId(R.id.navigation_notifications)).perform(click())
+        onView(withId(R.id.navigation_new)).perform(click())
     }
 
     fun assertHomeSelected() {
-        assertNavIsSelected(R.id.navigation_home)
-        onView(withId(R.id.top_title)).check(matches(allOf(isCompletelyDisplayed(), withText(R.string.top))))
+        assertNavIsSelected(R.id.navigation_top)
+        onView(withId(R.id.top_title)).check(matches(allOf(isCompletelyDisplayed(), withText(R.string.title_top))))
     }
 
     fun assertDashboardSelected() {
-        assertNavIsSelected(R.id.navigation_dashboard)
-        onView(withId(R.id.best_title)).check(matches(allOf(isCompletelyDisplayed(), withText(R.string.best))))
+        assertNavIsSelected(R.id.navigation_best)
+        onView(withId(R.id.best_title)).check(matches(allOf(isCompletelyDisplayed(), withText(R.string.title_best))))
     }
 
     fun assertNotificationsSelected() {
-        assertNavIsSelected(R.id.navigation_notifications)
-        onView(withId(R.id.new_title)).check(matches(allOf(isCompletelyDisplayed(), withText(R.string.new_title))))
+        assertNavIsSelected(R.id.navigation_new)
+        onView(withId(R.id.new_title)).check(matches(allOf(isCompletelyDisplayed(), withText(R.string.title_new))))
     }
 
     private fun assertNavIsSelected(position: Int) {
