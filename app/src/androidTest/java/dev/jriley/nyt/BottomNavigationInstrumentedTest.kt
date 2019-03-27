@@ -30,4 +30,36 @@ class BottomNavigationInstrumentedTest {
         BottomNavScreen.assertHomeSelected()
 
     }
+
+    @Test
+    fun rotation_retains_selection() {
+        activityRule.launchActivity(null)
+
+        BottomNavScreen.selectDashboard()
+
+        BottomNavScreen.assertDashboardSelected()
+
+        activityRule.rotateLandscape()
+
+        BottomNavScreen.assertDashboardSelected()
+
+        BottomNavScreen.selectNotifications()
+
+        BottomNavScreen.assertNotificationsSelected()
+
+        activityRule.rotatePortrait()
+
+        BottomNavScreen.assertNotificationsSelected()
+
+
+        BottomNavScreen.selectHome()
+
+        activityRule.rotateLandscape()
+
+        BottomNavScreen.assertHomeSelected()
+
+        activityRule.rotatePortrait()
+
+        BottomNavScreen.assertHomeSelected()
+    }
 }
