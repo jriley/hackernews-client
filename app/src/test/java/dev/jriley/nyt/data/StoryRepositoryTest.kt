@@ -2,11 +2,15 @@ package dev.jriley.nyt.data
 
 import com.nhaarman.mockito_kotlin.*
 import dev.jriley.nyt.service.HackerNewsService
+import io.reactivex.BackpressureStrategy
+import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.schedulers.TestScheduler
+import io.reactivex.subjects.BehaviorSubject
 import org.junit.Before
 import org.junit.Test
 import retrofit2.Response
+import test
 import kotlin.random.Random
 
 class StoryRepositoryTest {
@@ -41,6 +45,54 @@ class StoryRepositoryTest {
             assertComplete()
             assertValue(expectedIds)
         }
+    }
+
+    @Test
+    fun flowFromRepo() {
+        val expectedStoryList = listOf(Story.test())
+        val behaviorSubject = BehaviorSubject.create<List<Story>>()
+        val flowable: Flowable<List<Story>> = behaviorSubject.toFlowable(BackpressureStrategy.BUFFER)
+        whenever(storyData.storyList()).thenReturn(flowable)
+        testObject = StoryRepository(storyData, hackerNewsService, testScheduler)
+
+        testObject.flowBest().test().apply {
+            assertNoErrors()
+            assertNotComplete()
+            assertNoValues()
+        }
+
+        behaviorSubject.onNext(expectedStoryList)
+
+        testObject.flowBest().test().apply {
+            assertNoErrors()
+            assertNotComplete()
+            assertValues(expectedStoryList)
+        }
+
+    }
+
+    @Test
+    fun isLoadedDoNotCallService() {
+        whenever(storyData.isLoaded()).thenReturn(Single.just(true))
+        testObject = StoryRepository(storyData, hackerNewsService, testScheduler)
+
+        val testObserver = testObject.isLoaded().test()
+
+        testObserver.apply {
+            assertNoValues()
+            assertNotComplete()
+            assertNoErrors()
+        }
+
+        testScheduler.triggerActions()
+
+        testObserver.apply {
+            assertValues(true)
+            assertComplete()
+            assertNoErrors()
+        }
+
+        verifyZeroInteractions(hackerNewsService)
     }
 
     @Test
