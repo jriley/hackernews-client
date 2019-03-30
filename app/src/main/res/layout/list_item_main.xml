@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                   xmlns:tools="http://schemas.android.com/tools"
+                                   android:layout_width="match_parent"
+                                   android:layout_height="wrap_content"
+                                   android:layout_marginStart="6dp"
+                                   android:layout_marginEnd="6dp"
+                                   android:layout_marginTop="3dp"
+                                   android:layout_marginBottom="3dp"
+                                   android:clickable="true"
+                                   android:focusable="true"
+                                   android:foreground="?android:attr/selectableItemBackground"
+                                   app:cardBackgroundColor="@color/hackernews_B200"
+                                   app:cardCornerRadius="2dp"
+                                   app:cardElevation="1dp">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:minHeight="60dp"
+        android:orientation="vertical"
+        android:padding="@dimen/standard_margin"
+        tools:ignore="RtlSymmetry"
+        tools:showIn="@layout/activity_main">
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/CodeFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLength="140"
+            android:textSize="24sp"
+            tools:text="@tools:sample/lorem/random"/>
+
+        <TextView
+            android:id="@+id/by"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title"
+            tools:text="Sir Author Conan Doyle"/>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</androidx.cardview.widget.CardView>

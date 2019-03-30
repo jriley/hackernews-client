@@ -3,4 +3,8 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="hackernews_B500">#000</color>
+    <color name="hackernews_B200">#f6f6ef</color>
+    <color name="hackernews_B600">#fff</color>
+
 </resources>

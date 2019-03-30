@@ -6,7 +6,7 @@ private const val reasonableBoundSize = 10
 
 fun Story.Companion.test(id: Long = Random.nextLong(),
                          by: String = "by-${Random.nextInt(reasonableBoundSize)}",
-                         time: Long? = Random.nextLong(),
+                         time: Long = Random.nextLong(),
                          url: String = "url-${Random.nextInt(reasonableBoundSize)}",
                          title: String = "title-${Random.nextInt(reasonableBoundSize)}",
                          storyTypes: StoryTypes = StoryTypes.NEW): Story {

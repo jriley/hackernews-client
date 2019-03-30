@@ -107,7 +107,7 @@ class StoryRepositoryTest {
         testObserver.apply {
             assertNoErrors()
             assertComplete()
-            assertValue(story)
+            assertValue(response)
         }
 
     }
@@ -131,7 +131,7 @@ class StoryRepositoryTest {
         testObserver.apply {
             assertNoErrors()
             assertComplete()
-            assertValue(Story(-1))
+            assertValue(response)
         }
     }
 
@@ -140,7 +140,7 @@ class StoryRepositoryTest {
         val givenId1 = 2L
         val givenId2 = 3L
         val givenId4 = 4L
-        val expectedIds = listOf(givenId1, givenId2)
+        val expectedIds = listOf(Long.MAX_VALUE, Long.MAX_VALUE)
         val wireIds = listOf(givenId4, givenId1, givenId2)
         val story1 = Story(givenId1)
         val story2 = Story(givenId2)
