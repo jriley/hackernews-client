@@ -39,11 +39,14 @@ class StoryRepository(
             .flatMapIterable { filteredList -> Timber.tag("@").i("Filtered size:${filteredList.size}"); filteredList }
             .map { filteredId -> hackerNewsService.getStory(filteredId.toString()) }
             .flatMapSingle { single -> single }
-            .map { story -> story.body()?.run { storyData.insert(Story(this, filter)) }?: Single.just(-1L) }
+            .map { story -> story.body()?.run { filterStoriesOnlyWithUrl(filter) }?: Single.just(-1L) }
             .flatMapSingle { single -> single }
             .filter { it > 0 }
             .toList()
             .subscribeOn(scheduler)
+
+    private fun Story.filterStoriesOnlyWithUrl(filter: StoryTypes) : Single<Long> =
+        if(url.isNotBlank()) storyData.insert(Story(this, filter)) else Single.just(-1L)
 }
 
 interface StoryData {

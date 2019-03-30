@@ -228,4 +228,47 @@ class StoryRepositoryTest {
         verify(hackerNewsService).getStory("$givenId2")
         verify(hackerNewsService).getStory("$givenId4")
     }
+
+    @Test
+    fun `only use valid urls insert into the database`() {
+        val givenId1 = 2L
+        val givenId2 = 3L
+        val givenId4 = 4L
+        val expectedIds = listOf(Long.MAX_VALUE, Long.MAX_VALUE)
+        val wireIds = listOf(givenId4, givenId1, givenId2)
+        val story1 = Story.test(givenId1, url = "url-1")
+        val story2 = Story.test(givenId2, url = "url-2")
+        val story4 = Story.test(givenId4, url = "")
+        val response1 = Response.success(200, story1)
+        val response2 = Response.success(200, story2)
+        val response4 = Response.success(200, story4)
+        whenever(hackerNewsService.new).thenReturn(Single.just(wireIds))
+        whenever(storyData.insert(story1)).thenReturn(Single.just(Long.MAX_VALUE))
+        whenever(storyData.insert(story2)).thenReturn(Single.just(Long.MAX_VALUE))
+        whenever(hackerNewsService.getStory("$givenId1")).thenReturn(Single.just(response1))
+        whenever(hackerNewsService.getStory("$givenId2")).thenReturn(Single.just(response2))
+        whenever(hackerNewsService.getStory("$givenId4")).thenReturn(Single.just(response4))
+
+        val testObserver = testObject.fetchNewStories().test()
+
+        testObserver.apply {
+            assertNoErrors()
+            assertNotComplete()
+            assertNoValues()
+        }
+
+        testScheduler.triggerActions()
+
+        testObserver.apply {
+            assertNoErrors()
+            assertComplete()
+            assertValue(expectedIds)
+        }
+
+        verify(storyData).insert(story1)
+        verify(storyData).insert(story2)
+        verify(hackerNewsService).getStory("$givenId1")
+        verify(hackerNewsService).getStory("$givenId2")
+        verify(hackerNewsService).getStory("$givenId4")
+    }
 }
