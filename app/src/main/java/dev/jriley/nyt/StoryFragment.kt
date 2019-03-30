@@ -22,13 +22,12 @@ import timber.log.Timber
 abstract class StoryFragment : Fragment() {
 
     abstract val layout: Int
-    protected lateinit var listAdapter: StoryListAdapter
+    private lateinit var listAdapter: StoryListAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
         inflater.inflate(layout, container, false)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    protected fun wireUpModelToList(clazz: Class<StoryFragmentViewModel>, storyTypes: StoryTypes, recyclerView: RecyclerView) {
 
         listAdapter = StoryListAdapter().apply {
             clickObservable
@@ -36,6 +35,16 @@ abstract class StoryFragment : Fragment() {
                 .subscribe(this@StoryFragment::startWebViewActivity)
                 { t -> Timber.tag("@@").e(t, "StoryFragment.MainListObservableAdapter") }
         }
+
+        ViewModelProviders.of(this).get(clazz).apply {
+            storyTypesFilter = storyTypes
+            observableListStory.subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(listAdapter::submitList) { t -> Timber.tag("@@@").e(t, "$clazz.observableListStory") }
+        }
+
+        recyclerView.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
+        recyclerView.adapter = listAdapter
     }
 
     private fun startWebViewActivity(story: Story) {
@@ -68,15 +77,7 @@ class TopFragment : StoryFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        ViewModelProviders.of(this).get(StoryFragmentViewModel::class.java).apply {
-            storyTypesFilter = StoryTypes.TOP
-            observableListStory.subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(listAdapter::submitList) { t -> Timber.tag("@@@").e(t, "Ouch") }
-        }
-
-        top_list.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
-        top_list.adapter = listAdapter
+        wireUpModelToList(StoryFragmentViewModel::class.java, StoryTypes.TOP, top_list)
     }
 
 }
@@ -86,14 +87,7 @@ class NewFragment : StoryFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        ViewModelProviders.of(this).get(StoryFragmentViewModel::class.java).apply {
-            storyTypesFilter = StoryTypes.NEW
-            observableListStory.subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(listAdapter::submitList) { t -> Timber.tag("@@@").e(t, "Ouch") }
-        }
-        new_list.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
-        new_list.adapter = listAdapter
+        wireUpModelToList(StoryFragmentViewModel::class.java, StoryTypes.NEW, new_list)
     }
 }
 
@@ -102,14 +96,6 @@ class BestFragment : StoryFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        ViewModelProviders.of(this).get(StoryFragmentViewModel::class.java).apply {
-            storyTypesFilter = StoryTypes.BEST
-            observableListStory.subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(listAdapter::submitList) { t -> Timber.tag("@@@").e(t, "Ouch") }
-        }
-
-        best_list.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
-        best_list.adapter = listAdapter
+        wireUpModelToList(StoryFragmentViewModel::class.java, StoryTypes.BEST, best_list)
     }
 }
