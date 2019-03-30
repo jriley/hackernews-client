@@ -1,6 +1,6 @@
 package dev.jriley.nyt.service
 
-import dev.jriley.nyt.StoryTypes
+import dev.jriley.nyt.data.Story
 import io.reactivex.Single
 import retrofit2.Response
 import retrofit2.http.GET
@@ -21,9 +21,3 @@ interface HackerNewsService {
     fun getStory(@Path("id") item: String): Single<Response<Story>>
 }
 
-data class Story(val id: Long,
-                 val by: String? = null,
-                 val time: Long? = null,
-                 val url: String? = null,
-                 val title: String? = null,
-                 val storyTypes: Int = StoryTypes.NEW.ordinal)

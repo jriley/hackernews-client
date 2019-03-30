@@ -2,7 +2,7 @@ package dev.jriley.nyt.data
 
 import dev.jriley.nyt.service.HackerNewsService
 import dev.jriley.nyt.service.KotlinServices
-import dev.jriley.nyt.service.Story
+import io.reactivex.Flowable
 import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
@@ -35,6 +35,13 @@ class StoryRepository(
 }
 
 interface StoryData {
-    // The returned long is database row id, NOT the story id.
+    fun isLoaded(): Single<Boolean>
+
     fun insert(story: Story): Single<Long>
+
+    fun update(story: Story): Single<Int>
+
+    fun isLoaded(id: Long): Boolean
+
+    fun storyList(): Flowable<List<Story>>
 }

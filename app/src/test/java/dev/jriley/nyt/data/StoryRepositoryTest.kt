@@ -2,7 +2,6 @@ package dev.jriley.nyt.data
 
 import com.nhaarman.mockito_kotlin.*
 import dev.jriley.nyt.service.HackerNewsService
-import dev.jriley.nyt.service.Story
 import io.reactivex.Single
 import io.reactivex.schedulers.TestScheduler
 import org.junit.Before
