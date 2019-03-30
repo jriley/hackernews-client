@@ -1,5 +1,6 @@
 package dev.jriley.nyt
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import dev.jriley.nyt.data.Story
+import dev.jriley.nyt.ui.enterRightExitLeft
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_best_story.*
@@ -30,10 +33,23 @@ abstract class StoryFragment : Fragment() {
         listAdapter = StoryListAdapter().apply {
             clickObservable
                 .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe({ st ->
-                    Toast.makeText(this@StoryFragment.context, "${st.title}", Toast.LENGTH_SHORT).show()
-                })
+                .subscribe(this@StoryFragment::startWebViewActivity)
                 { t -> Timber.tag("@@").e(t, "StoryFragment.MainListObservableAdapter") }
+        }
+    }
+
+    private fun startWebViewActivity(story: Story) {
+        Timber.tag("@@").i("Story clicked ${story.title}")
+        if (story.url.isNotBlank()) {
+            activity?.let {
+                startActivity(Intent(it, WebContentActivity::class.java).apply {
+                    putExtra(WebContentActivity.URL_TAG, story.url)
+                    putExtra(WebContentActivity.ID_TAG, story.id)
+                })
+                it.enterRightExitLeft()
+            } ?: Timber.tag("@@").e("There was no Activity some how for - ${story.id}:${story.title}")
+        } else {
+            Toast.makeText(activity, "No valid url for that story", Toast.LENGTH_SHORT).show()
         }
     }
 

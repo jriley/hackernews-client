@@ -26,6 +26,7 @@
                 android:name=".BottomNavActivity"
                 android:label="@string/app_name">
         </activity>
+        <activity android:name=".WebContentActivity"/>
         <service
                 android:name=".service.UpdateStoriesService"
                 android:exported="false"/>
