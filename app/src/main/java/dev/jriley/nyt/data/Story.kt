@@ -16,17 +16,6 @@ data class Story(
     val storyTypes: Int = StoryTypes.NEW.ordinal
 )
 {
-//    constructor(sr: StoryResponse): this(sr.id, sr.by, sr.time, sr.url, sr.title)
     constructor(story: Story, storyTypes: StoryTypes) : this(story.id, story.by, story.time, story.url,  story.title, storyTypes.ordinal)
     companion object
 }
-
-data class StoryResponse(val by: String,
-                         val descendants: Long,
-                         val id: Long,
-                         val score: Long,
-                         val time: Long,
-                         val title: String,
-                         val type :String,
-                         val url:String
-                         )

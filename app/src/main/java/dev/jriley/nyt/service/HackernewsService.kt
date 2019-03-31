@@ -1,7 +1,6 @@
 package dev.jriley.nyt.service
 
 import dev.jriley.nyt.data.Story
-import dev.jriley.nyt.data.StoryResponse
 import io.reactivex.Single
 import retrofit2.Response
 import retrofit2.http.GET
@@ -21,4 +20,3 @@ interface HackerNewsService {
     @GET("v0/item/{id}.json")
     fun getStory(@Path("id") item: String): Single<Response<Story>>
 }
-
