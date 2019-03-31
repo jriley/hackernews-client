@@ -18,12 +18,15 @@ class StoryFragmentViewModelTest {
     private val behaviorSubject: BehaviorSubject<List<Story>> = BehaviorSubject.create()
     private val flowable: Flowable<List<Story>> = behaviorSubject.toFlowable(BackpressureStrategy.BUFFER)
     private val ioScheduler: TestScheduler = TestScheduler()
+    private val component: AppComponent = mock()
+
 
     @Test
     fun getValuesFromRepoButNotErrors() {
         val expectedList = listOf(Story.test())
         whenever(storyRepository.flowBest()).thenReturn(flowable)
-        testObject = StoryFragmentViewModel(storyRepository = storyRepository, ioScheduler = ioScheduler)
+        testObject =
+            StoryFragmentViewModel(storyRepository = storyRepository, ioScheduler = ioScheduler, component = component)
 
         val testObserver = testObject.observableListStory.test()
 
@@ -64,7 +67,8 @@ class StoryFragmentViewModelTest {
         testObject = StoryFragmentViewModel(
             storyTypesFilter = StoryTypes.TOP,
             storyRepository = storyRepository,
-            ioScheduler = ioScheduler
+            ioScheduler = ioScheduler,
+            component = component
         )
 
         val testObserver = testObject.observableListStory.test()
@@ -97,7 +101,8 @@ class StoryFragmentViewModelTest {
         testObject = StoryFragmentViewModel(
             storyTypesFilter = StoryTypes.NEW,
             storyRepository = storyRepository,
-            ioScheduler = ioScheduler
+            ioScheduler = ioScheduler,
+            component = component
         )
 
         val testObserver = testObject.observableListStory.test()
@@ -130,7 +135,8 @@ class StoryFragmentViewModelTest {
         testObject = StoryFragmentViewModel(
             storyTypesFilter = StoryTypes.BEST,
             storyRepository = storyRepository,
-            ioScheduler = ioScheduler
+            ioScheduler = ioScheduler,
+            component = component
         )
 
         val testObserver = testObject.observableListStory.test()

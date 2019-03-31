@@ -6,21 +6,27 @@ import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import dev.jriley.nyt.BottomNavActivity
+import dev.jriley.nyt.NewsApp
 import dev.jriley.nyt.R
 import dev.jriley.nyt.ui.finishAndExitWithAnimation
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_splash.*
 import timber.log.Timber
+import javax.inject.Inject
 
 class SplashActivity : AppCompatActivity() {
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
+    @Inject
+    lateinit var splashViewModelFactory: SplashViewModelFactory
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        NewsApp.component.inject(this)
         setContentView(R.layout.activity_splash)
-        ViewModelProviders.of(this).get(SplashViewModel::class.java).apply {
+        ViewModelProviders.of(this, splashViewModelFactory).get(SplashViewModel::class.java).apply {
             compositeDisposable.add(loadingObservable
                     .doFinally { compositeDisposable.clear() }
                     .observeOn(AndroidSchedulers.mainThread())

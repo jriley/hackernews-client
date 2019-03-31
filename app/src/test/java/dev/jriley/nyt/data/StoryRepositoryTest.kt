@@ -1,6 +1,7 @@
 package dev.jriley.nyt.data
 
 import com.nhaarman.mockito_kotlin.*
+import dev.jriley.nyt.AppComponent
 import dev.jriley.nyt.service.HackerNewsService
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
@@ -19,10 +20,12 @@ class StoryRepositoryTest {
     private val storyData: StoryData = mock()
     private val hackerNewsService: HackerNewsService = mock()
     private val testScheduler: TestScheduler = TestScheduler()
+    private val component: AppComponent = mock()
 
     @Before
     fun setUp() {
-        testObject = StoryRepository(storyData, hackerNewsService, testScheduler)
+        whenever(component.injectStoryRepository(any())).then {  }
+        testObject = StoryRepository(storyData, hackerNewsService, testScheduler, component)
     }
 
     @Test
@@ -53,7 +56,7 @@ class StoryRepositoryTest {
         val behaviorSubject = BehaviorSubject.create<List<Story>>()
         val flowable: Flowable<List<Story>> = behaviorSubject.toFlowable(BackpressureStrategy.BUFFER)
         whenever(storyData.storyList()).thenReturn(flowable)
-        testObject = StoryRepository(storyData, hackerNewsService, testScheduler)
+        testObject = StoryRepository(storyData, hackerNewsService, testScheduler, component)
 
         testObject.flowBest().test().apply {
             assertNoErrors()
@@ -74,7 +77,7 @@ class StoryRepositoryTest {
     @Test
     fun isLoadedDoNotCallService() {
         whenever(storyData.isLoaded()).thenReturn(Single.just(true))
-        testObject = StoryRepository(storyData, hackerNewsService, testScheduler)
+        testObject = StoryRepository(storyData, hackerNewsService, testScheduler, component)
 
         val testObserver = testObject.isLoaded().test()
 
@@ -142,7 +145,7 @@ class StoryRepositoryTest {
     @Test
     fun `call service to get the story data with an id`() {
         val expectedId = Random.nextLong()
-        val story = Story(expectedId)
+        val story = Story.test(expectedId)
         val response = Response.success(200, story)
         whenever(hackerNewsService.getStory("$expectedId")).thenReturn(Single.just(response))
 
@@ -194,8 +197,8 @@ class StoryRepositoryTest {
         val givenId4 = 4L
         val expectedIds = listOf(Long.MAX_VALUE, Long.MAX_VALUE)
         val wireIds = listOf(givenId4, givenId1, givenId2)
-        val story1 = Story(givenId1)
-        val story2 = Story(givenId2)
+        val story1 = Story.test(givenId1, url = "url-1")
+        val story2 = Story.test(givenId2, url = "url-2")
         val response1 = Response.success(200, story1)
         val response2 = Response.success(200, story2)
         val responseNull: Response<Story> = Response.success(null)

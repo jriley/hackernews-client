@@ -3,16 +3,24 @@ package dev.jriley.nyt.service
 import android.app.IntentService
 import android.content.Context
 import android.content.Intent
+import dev.jriley.nyt.NewsApp
 import dev.jriley.nyt.data.StoryRepository
-import dev.jriley.nyt.data.StoryRepositoryFactory
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.Function3
 import timber.log.Timber
+import javax.inject.Inject
 
-class UpdateStoriesService(private val storyRepository: StoryRepository = StoryRepositoryFactory.storyRepository,
-                           private val compositeDisposable: CompositeDisposable = CompositeDisposable()) : IntentService(TAG) {
+class UpdateStoriesService : IntentService(TAG) {
 
+    @Inject
+    lateinit var storyRepository: StoryRepository
+
+    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
+
+    init {
+        NewsApp.component.inject(this)
+    }
 
     override fun onHandleIntent(intent: Intent?) {
 

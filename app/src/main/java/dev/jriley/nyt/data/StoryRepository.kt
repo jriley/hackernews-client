@@ -1,24 +1,26 @@
 package dev.jriley.nyt.data
 
+import dev.jriley.nyt.AppComponent
+import dev.jriley.nyt.NewsApp
 import dev.jriley.nyt.StoryTypes
 import dev.jriley.nyt.service.HackerNewsService
-import dev.jriley.nyt.service.KotlinServices
 import io.reactivex.Flowable
 import io.reactivex.Scheduler
 import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
 import retrofit2.Response
 import timber.log.Timber
+import javax.inject.Inject
+import javax.inject.Named
 
-object StoryRepositoryFactory {
-    val storyRepository: StoryRepository by lazy { StoryRepository() }
-}
-
-class StoryRepository(
-    private val storyData: StoryData = DatabaseProvider.dataBase.storyEntityDao(),
-    private val hackerNewsService: HackerNewsService = KotlinServices.hackerNewsService,
-    private val scheduler: Scheduler = Schedulers.io()
+class StoryRepository @Inject constructor(
+    private val storyData: StoryData,
+    private val hackerNewsService: HackerNewsService,
+    @Named("io") private var scheduler: Scheduler,
+    component: AppComponent = NewsApp.component
 ) {
+    init {
+        component.injectStoryRepository(this)
+    }
 
     fun flowBest(): Flowable<List<Story>> = storyData.storyList()
     fun isLoaded(): Single<Boolean> = storyData.isLoaded().subscribeOn(scheduler)
@@ -33,20 +35,20 @@ class StoryRepository(
 
     fun fetchBestStories(): Single<List<Long>> = fetchAndInsert(loadBestIds(), StoryTypes.BEST)
 
-    private fun fetchAndInsert(api: Single<List<Long>>, filter: StoryTypes) : Single<List<Long>> =
+    private fun fetchAndInsert(api: Single<List<Long>>, filter: StoryTypes): Single<List<Long>> =
         api.map { id -> Timber.tag("@@@@").i("Original  size: ${id.size}"); id.filter { !storyData.isLoaded(it) } }
             .toObservable()
             .flatMapIterable { filteredList -> Timber.tag("@").i("Filtered size:${filteredList.size}"); filteredList }
             .map { filteredId -> hackerNewsService.getStory(filteredId.toString()) }
             .flatMapSingle { single -> single }
-            .map { story -> story.body()?.run { filterStoriesOnlyWithUrl(filter) }?: Single.just(-1L) }
+            .map { story -> story.body()?.run { filterStoriesOnlyWithUrl(filter) } ?: Single.just(-1L) }
             .flatMapSingle { single -> single }
             .filter { it > 0 }
             .toList()
             .subscribeOn(scheduler)
 
-    private fun Story.filterStoriesOnlyWithUrl(filter: StoryTypes) : Single<Long> =
-        if(url.isNotBlank()) storyData.insert(Story(this, filter)) else Single.just(-1L)
+    private fun Story.filterStoriesOnlyWithUrl(filter: StoryTypes): Single<Long> =
+        if (url.isNotBlank()) storyData.insert(Story(this, filter)) else Single.just(-1L)
 }
 
 interface StoryData {

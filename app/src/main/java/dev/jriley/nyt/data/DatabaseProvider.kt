@@ -7,10 +7,6 @@ import timber.log.Timber
 
 const val story = "story"
 
-object DatabaseProvider {
-    lateinit var dataBase: AppDatabase
-}
-
 @Database(entities = [Story::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun storyEntityDao(): StoryDao

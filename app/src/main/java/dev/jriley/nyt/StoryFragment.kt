@@ -18,11 +18,16 @@ import kotlinx.android.synthetic.main.fragment_best_story.*
 import kotlinx.android.synthetic.main.fragment_new_story.*
 import kotlinx.android.synthetic.main.fragment_top_story.*
 import timber.log.Timber
+import javax.inject.Inject
 
 abstract class StoryFragment : Fragment() {
 
     abstract val layout: Int
+
     private lateinit var listAdapter: StoryListAdapter
+
+    @Inject
+    lateinit var viewModelFactory: FragmentViewModelFactory
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
         inflater.inflate(layout, container, false)
@@ -36,7 +41,7 @@ abstract class StoryFragment : Fragment() {
                 { t -> Timber.tag("@@").e(t, "StoryFragment.MainListObservableAdapter") }
         }
 
-        ViewModelProviders.of(this).get(clazz).apply {
+        ViewModelProviders.of(this, viewModelFactory).get(clazz).apply {
             storyTypesFilter = storyTypes
             observableListStory.subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -77,6 +82,7 @@ class TopFragment : StoryFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        NewsApp.component.inject(this)
         wireUpModelToList(StoryFragmentViewModel::class.java, StoryTypes.TOP, top_list)
     }
 
@@ -87,6 +93,7 @@ class NewFragment : StoryFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        NewsApp.component.inject(this)
         wireUpModelToList(StoryFragmentViewModel::class.java, StoryTypes.NEW, new_list)
     }
 }
@@ -96,6 +103,7 @@ class BestFragment : StoryFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        NewsApp.component.inject(this)
         wireUpModelToList(StoryFragmentViewModel::class.java, StoryTypes.BEST, best_list)
     }
 }
