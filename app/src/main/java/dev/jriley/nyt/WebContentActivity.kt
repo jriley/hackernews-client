@@ -24,7 +24,6 @@ class WebContentActivity : AppCompatActivity() {
 
             openInBrowser.setOnClickListener {
                 startActivity(Intent(Intent.ACTION_VIEW).apply { data = Uri.parse(url) })
-                finish()
             }
         }
     }
