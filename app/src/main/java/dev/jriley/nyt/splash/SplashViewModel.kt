@@ -26,6 +26,11 @@ class SplashViewModel(background: Scheduler,
                 .subscribe({ b -> behaviorSubject.onNext(b) }, { t -> Timber.e(t) }))
     }
 
+    override fun onCleared() {
+        compositeDisposable.clear()
+        super.onCleared()
+    }
+
 }
 
 @Suppress("UNCHECKED_CAST")

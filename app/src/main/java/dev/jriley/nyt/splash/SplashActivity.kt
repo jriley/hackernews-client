@@ -39,6 +39,11 @@ class SplashActivity : AppCompatActivity() {
         content.startAnimation(AlphaAnimation(0.0F, 1.0F).apply { duration = 1000 })
     }
 
+    override fun onDestroy() {
+        compositeDisposable.clear()
+        super.onDestroy()
+    }
+
     private fun startMain() {
         startActivity(Intent(this, BottomNavActivity::class.java))
         finishAndExitWithAnimation()

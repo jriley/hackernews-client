@@ -31,6 +31,11 @@ class StoryFragmentViewModel @Inject constructor(
             .subscribe(localBehaviorSubject::onNext) { t -> Timber.tag("@@").e(t, "StoryFragmentViewModel") }
     }
 
+    override fun onCleared() {
+        disposable?.dispose()
+        super.onCleared()
+    }
+
 }
 
 @Suppress("UNCHECKED_CAST")
