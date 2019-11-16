@@ -6,6 +6,33 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'kotlin-kapt'
 
+apply plugin: 'jacoco'
+
+apply from: "../artifacts.gradle"
+
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
+
+    reports {
+        csv.enabled false
+        xml.enabled = true
+        html.enabled = true
+    }
+
+    def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*']
+
+    def debugTree = fileTree(dir: "${buildDir}/intermediates/app_classes/debug/bundleDebugClasses", excludes: fileFilter)
+//    def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
+//    def debugTree_1 = fileTree(dir: "${buildDir}/intermediates/jacoco_instrumented_classes/debug/jacocoDebug/out", excludes: fileFilter)
+    def mainSrc = "${project.projectDir}/src/main/java"
+
+    sourceDirectories = files([mainSrc])
+    classDirectories = files([debugTree])
+    executionData = fileTree(dir: "$buildDir", includes: [
+            "jacoco/testDebugUnitTest.exec",
+            "outputs/code-coverage/debugAndroidTest/connected/*coverage.ec"
+    ])
+}
+
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -22,6 +49,12 @@ android {
         }
     }
     buildTypes {
+
+        debug {
+            minifyEnabled false
+            testCoverageEnabled true
+        }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -35,10 +68,31 @@ android {
         }
         androidTest {
             java.srcDirs sharedTestDir
-            assets.srcDirs += files("$projectDir/schemas".toString())
+//            assets.srcDirs += files("$projectDir/schemas".toString())
         }
     }
+
+    testOptions {
+//        execution 'ANDROID_TEST_ORCHESTRATOR'
+        animationsDisabled true
+        unitTests.returnDefaultValues = true
+        unitTests.includeAndroidResources = true
+        unitTests.all {
+            jacoco {
+                includeNoLocationClasses = true
+            }
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    tasks.matching { it instanceof Test }.all {
+        testLogging.events = ["failed", "passed", "skipped"]
+    }
 }
+
 final retrofit2_version = '2.3.0'
 final room_version = "2.0.0"
 dependencies {

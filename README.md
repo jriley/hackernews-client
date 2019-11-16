@@ -8,4 +8,7 @@ The ViewModels are from the lifecycle architecture components holding a reposito
 You should be able to do a full test run and install with the following command on the CLI:  
 `./gradlew clean test cAT installDeb`
 
-My apologies that I did not put any effort into the launchers nor animations. So, they are out of the box and rough. This is a simplified version of an app that I have build previously and use regularly. I have removed several of the features from that code base and plumbed the basics together here for you to get a rudimentary idea of the patterns that I like to use. Please let me know if you have any questions about the workflow or logic behind the tests. They are not elaborate but show the set up and execution for the architecture both unit an UAT.       
+My apologies that I did not put any effort into the launchers nor animations. So, they are out of the box and rough. This is a simplified version of an app that I have build previously and use regularly. I have removed several of the features from that code base and plumbed the basics together here for you to get a rudimentary idea of the patterns that I like to use. Please let me know if you have any questions about the workflow or logic behind the tests. They are not elaborate but show the set up and execution for the architecture both unit an UAT.
+
+On this branch I have implemented the Jacoco/SonarQube integration. If the server is running just run the following command from the cli.  
+`./gradlew clean createDebugCoverageReport jacocoTestReport sonarqube`         

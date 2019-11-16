@@ -41,6 +41,7 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         compositeDisposable.clear()
+        content.startAnimation(AlphaAnimation(0.0F, 1.0F).apply { duration = 1000 })
         super.onDestroy()
     }
 

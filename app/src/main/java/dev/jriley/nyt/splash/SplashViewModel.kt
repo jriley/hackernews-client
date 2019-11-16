@@ -21,7 +21,7 @@ class SplashViewModel(background: Scheduler,
     init {
         compositeDisposable.add(storyRepository.isLoaded()
                 .subscribeOn(background)
-                .delay(3, TimeUnit.SECONDS, background)
+                .delay(13, TimeUnit.SECONDS, background)
                 .doFinally { compositeDisposable.clear() }
                 .subscribe({ b -> behaviorSubject.onNext(b) }, { t -> Timber.e(t) }))
     }
